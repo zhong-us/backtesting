@@ -11,7 +11,7 @@ pool = st.selectbox('Choose pool of stocks:', ['NASDAQ-100', 'SP-500'], label_vi
 
 
 'You can filter them multiple times to determine the ones having the strongest momentum.'
-st.caption('If less than 4 times of filtering is desired, you can use the same number of stocks as your last filtering for the filters that\'re not needed. For example, if only 3 times filtering is needed, and you need 10 stocks in your portfolio, just put 10 stocks in your 4th filter as well and don\'t worry about the month options.')
+st.caption('If less than 4 filters is desired, you can use the same number of stocks as your last filtering for the filters that\'re not needed. For example, if only 3 filters are needed, and you need 10 stocks in your portfolio, just put 10 stocks in your 4th filter as well and don\'t worry about the month options.')
 # list of lists of # of stocks to stay and # of months to look back
 # filters = [[n,m],[n,m],[n,m],[n,m]]
 filters = []
