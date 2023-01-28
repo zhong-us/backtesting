@@ -174,6 +174,6 @@ if run:
     st.pyplot(fig)
 
 
-    '#### Tickers for current month and daily comparison with index.'
+    '#### Tickers for current month and daily comparison with index:'
     with st.expander('This is not financial advice. Please click with caution'):
         st.table(monthly_df)
