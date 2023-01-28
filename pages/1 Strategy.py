@@ -1,15 +1,17 @@
 import streamlit as st
 
+st.info('If you are viewing from a phone, horizontal view is recommended.')
 'This strategy will choose the stocks to hold based on past performance.'
 'Holding period is for one whole month.'
-'If you have more than 1 stock in your portfolio (Strongly recommend), stocks will be held as equal weight'
+'If you have more than 1 stock in your portfolio (strongly recommend), stocks will be held as equal weight.'
 'Rebalances happen on close of each month when new tickers for next month will be determined.'
 'You can choose a pool of stocks and filter them based on their past performance as you like.'
 'The portfolio performance for each month will be saved and used for visualization.'
 pool = st.selectbox('Choose pool of stocks:', ['NASDAQ-100', 'SP-500'], label_visibility = 'visible')
 
 
-'You can filter them multiple times to determine the ones have the strongest momentum.'
+'You can filter them multiple times to determine the ones having the strongest momentum.'
+st.caption('If less than 4 times of filtering is desired, you can use the same number of stocks as your last filtering for the filters that\'re not needed. For example, if only 3 times filtering is needed, and you need 10 stocks in your portfolio, just put 10 stocks in your 4th filter as well and don\'t worry about the month options.')
 # list of lists of # of stocks to stay and # of months to look back
 # filters = [[n,m],[n,m],[n,m],[n,m]]
 filters = []
@@ -174,6 +176,6 @@ if run:
     st.pyplot(fig)
 
 
-    '#### Tickers for current month and daily comparison with index:'
+    '#### Stock tickers for current month and daily comparison with index:'
     with st.expander('This is not financial advice. Please click with caution'):
         st.table(monthly_df)
