@@ -30,7 +30,7 @@ filters.append([n,m])
 # 2nd filter
 col1,col2,col3,col4,col5 = st.columns(5)
 with col1:
-    'then get the top'
+    'Then get the top'
 with col2:
     n = st.selectbox('numbers',[1,2,3,4,5,10,20,30,40,50,60,70,80,90,100,200,250],index = 7,label_visibility = 'collapsed')
 with col3:
@@ -44,7 +44,7 @@ filters.append([n,m])
 # 3rd filter
 col1,col2,col3,col4,col5 = st.columns(5)
 with col1:
-    'then get the top'
+    'Then get the top'
 with col2:
     n = st.selectbox('numbers',[1,2,3,4,5,10,20,30,40,50,60,70,80,90,100,200,250],5,label_visibility = 'collapsed')
 with col3:
@@ -58,7 +58,7 @@ filters.append([n,m])
 # 4th filter
 col1,col2,col3,col4,col5 = st.columns(5)
 with col1:
-    'then get the top'
+    'Then get the top'
 with col2:
     n = st.selectbox('numbers',[1,2,3,4,5,10,20,30,40,50,60,70,80,90,100,200,250],1,label_visibility = 'collapsed')
 with col3:
@@ -142,6 +142,7 @@ if run:
 
 
     '#### What\'s your monthly Alpha compare to index'
+    st.caption('Alpha means the excess return / the amount that you \'beat the market\'')
     # Difference between strategy and index (Alpha)
     import matplotlib.ticker as ticker
     import matplotlib.pyplot as plt

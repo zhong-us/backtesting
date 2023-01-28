@@ -1,7 +1,7 @@
 import streamlit as st
 
 '## \"Be fearful when others are greedy and'
-'## to be greedy only when others are fearful\"'
+'## to be greedy only when others are fearful.\"'
 '### - Warren Buffett'
 'Momentum trading is exactly the opposite to one of the most known quote in investment world.'
 'While personally I believe momentum trading has it\'s place and can shine if excuted with discipline,'
