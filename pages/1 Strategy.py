@@ -141,7 +141,7 @@ if run:
     st.line_chart(cum_ret)
 
 
-    '#### What\'s your monthly Alpha compare to index'
+    '#### What\'s your monthly Alpha compare to index?'
     st.caption('Alpha means the excess return / the amount that you \'beat the market\'')
     # Difference between strategy and index (Alpha)
     import matplotlib.ticker as ticker
