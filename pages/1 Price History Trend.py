@@ -8,7 +8,7 @@ st.info('For optimal viewing on mobile, rotate your device to landscape orientat
 
 #pool = st.selectbox('Choose pool of stocks:', ['NASDAQ-100', 'S&P 500'], label_visibility = 'visible')
 pool = st.radio('Create a customized portfolio choosing a pool of stocks and filtering them based on past performance.'
-        ,('NASDAQ-100 (Faster)', 'S&P 500 (Slower)'),horizontal=True)
+        ,('NASDAQ-100 (Fast)', 'S&P 500 (Slow)'),horizontal=True)
 
 'Multiple rounds of filtering can be applied to identify stocks with the strongest momentum.'
 st.caption('If less than 4 filters are needed, put the final number of stocks left in the filters that\'re not needed. For example, if only 3 filters are needed, and you need 10 stocks in your portfolio, just put 10 stocks in your 4th filter as well and choose any month option (It does not matter).')
@@ -38,7 +38,7 @@ with col2:
 with col3:
      'performers using'
 with col4:
-    m = st.selectbox('months', [1,2,3,4,5,6,7,8,9,10,11,12], 5,label_visibility = 'collapsed')
+    m = st.selectbox('months', [1,2,3,4,5,6,7,8,9,10,11,12,18], 5,label_visibility = 'collapsed')
 with col5:
     'months return'
 filters.append([n,m])
@@ -89,7 +89,7 @@ if run:
     from dateutil.relativedelta import relativedelta
 
     # Tickers
-    if pool == 'NASDAQ-100 (Faster)':
+    if pool == 'NASDAQ-100 (Fast)':
         ticker_df = pd.read_html("https://en.wikipedia.org/wiki/Nasdaq-100")[4]
         tickers = ticker_df.Ticker.to_list()
         idx = 'QQQ'
@@ -98,6 +98,7 @@ if run:
         tickers = ticker_df.Symbol.to_list()
         idx = 'SPY'
 
+    tickers = [x.replace('.','-') for x in tickers]
     plot_date = date_input+'-01'
     start_date = datetime.strptime(plot_date,'%Y-%m-%d')-relativedelta(months=13)
 
@@ -148,7 +149,7 @@ if run:
     ax.yaxis.set_major_formatter(ticker.PercentFormatter())
     ax.set_ylabel('Return')
     ax.grid()
-    ax.set_title(f'Cumulate return since {plot_date}')
+    ax.set_title(f'Cumulated return')
     ax.legend(['Strategy',idx])
     st.pyplot(fig)
 
@@ -174,26 +175,24 @@ if run:
     # Portfolio returns daily
     top_tickers = get_top(current).to_list()
     daily_df = yf.download(top_tickers,start=current)['Adj Close'].pct_change().loc[mom.index[-1]:]
-    if len(top_tickers)==1:
+    if len(top_tickers)==1: # daily_df is a Series
         daily_df = daily_df.to_frame(*top_tickers)
-    daily_df['Portfolio Total'] = daily_df.mean(axis=1)
+    daily_df['Strategy'] = daily_df.mean(axis=1)
     daily_df[idx] = yf.download(idx,start=current)['Adj Close'].pct_change().loc[mom.index[-1]:]
     daily_df.index = [x.date() for x in daily_df.index]
     
     # Daily chart 
     fig, ax = plt.subplots()
-    daily_cumprod = (daily_df[['Portfolio Total',idx]]+1).cumprod()
-    tmp = pd.DataFrame([[0,0]],columns=['Portfolio Total',idx],index=[(mom.index[-1]-pd.DateOffset(1)).date()])
+    daily_cumprod = (daily_df[['Strategy',idx]]+1).cumprod()
+    tmp = pd.DataFrame([[0,0]],columns=['Strategy',idx],index=[(mom.index[-1]-pd.DateOffset(1)).date()])
     pd.concat([100*(daily_cumprod-1),tmp]).plot(ax=ax,grid=True,title=f'Performance since {mom.index[-1].date()}',figsize=(10,6))
     ax.yaxis.set_major_formatter(ticker.PercentFormatter())
     st.pyplot(fig)
 
 
-    '#### Selection of stocks for the current month vs. benchmark index:'
-    monthly_df = (mom-1).loc[current:,get_top(current)][1:]
-    monthly_df['Portfolio Total'] = monthly_df.mean(axis=1)
-    monthly_df[idx]=idx_return[current:]-1
+    '#### Daily performance of selected stocks for current month:'
+    monthly_df = (mom-1).loc[current:,top_tickers][1:]
     monthly_df.index = ['Current Month total']
-    monthly_df = pd.concat([daily_df,monthly_df])
+    monthly_df = pd.concat([daily_df[top_tickers],monthly_df])
     with st.expander('This is not financial advice. Proceed at your own risk'):
         st.table(monthly_df)
