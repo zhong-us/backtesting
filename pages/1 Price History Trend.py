@@ -3,7 +3,8 @@ from datetime import datetime, timedelta
 '## Price History Trend'
 st.info('For optimal viewing on mobile, rotate your device to landscape orientation.')
 'This strategy selects stocks for the portfolio based on their past performance ranking among its peers.'
-'The portfolio rebalances itself on 1st of every month, when new stocks for the month are selected.'
+'The portfolio rebalances monthly at month-end, with new stocks for the following month being selected.'
+st.caption('Check back on the first day of the next month to see the new stock tickers.')
 'The holding period is set for a duration of one month.'
 
 #pool = st.selectbox('Choose pool of stocks:', ['NASDAQ-100', 'S&P 500'], label_visibility = 'visible')
@@ -71,7 +72,7 @@ with col5:
     'months return.'
 filters.append([n,m])
 
-'Unless you choose to have only one stock in the portfolio, stocks will be held with equal weight.'
+'Stocks will be held with equal weight, unless you opt for a one-stock portfolio.'
 'The performance of the strategy is recorded each month for visualization.'
  
 date_input = st.text_input('Visualization start from (YYYY-MM)','2013-01')
@@ -189,10 +190,13 @@ if run:
     ax.yaxis.set_major_formatter(ticker.PercentFormatter())
     st.pyplot(fig)
 
+    # Yahoo bug
+    with st.expander('If the chart appears inaccurate at the beginning of a month, click here for info on a bug in Yahoo Finance.'):
+        st.caption('''Real-time price data is sourced from Yahoo Finance. However, there is a bug in their system that occasionally discards the 31st day of a month. This can result in incorrect total percentage returns calculated for that month and the following one due to missing data for the 31st. To address this issue, one solution is to simply consider the affected month as having only 30 days instead. The price change on the missing day will then be reflected in the returns for the following month, even though it won't be visible in the table. Hope Yahoo will fix this in the future.''')
 
-    '#### Daily performance of selected stocks for current month:'
+
+    '#### Daily performance of chosen stocks for current month:'
     monthly_df = (mom-1).loc[current:,top_tickers][1:]
     monthly_df.index = ['Current Month total']
     monthly_df = pd.concat([daily_df[top_tickers],monthly_df])
-    with st.expander('This is not financial advice. Proceed at your own risk'):
-        st.table(monthly_df)
+    st.table(monthly_df)
