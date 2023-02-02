@@ -24,30 +24,33 @@ def moving_average_cross(data, fast_avg, slow_avg):
 ticker = st.text_input('Please input **one** stock/ETF ticker (Eg. BRK-B) for visualization:')
 plot_date = st.date_input("Visualization starting from",value=datetime(2020,1,1),max_value=datetime.today()-timedelta(days=5))
 short = st.checkbox('"Double down" by shorting the same quantity of the asset when a sell signal is triggered.')
-fast_avg = st.slider('Fast Moving Average', 5, 100, 50,format='%d days')
-slow_avg = st.slider('Slow Moving Average', 6, 600, 200,format='%d days')
+fast_avg = st.slider('Fast Moving Average', 5, 250, 50,format='%d days')
+slow_avg = st.slider('Slow Moving Average', 10, 1000, 200,format='%d days')
 if ticker:    
     # in order for visualization to start on the plot_date
     # analysis has to start earlier to calculate the moving averages
     # and to compensate for weekends and holidays
     start_date = plot_date-timedelta(days=slow_avg*1.5)
     data = yf.download(ticker, start=start_date)['Adj Close'].pct_change()+1
-    signals = moving_average_cross(data, fast_avg, slow_avg)
-    portfolio = data * signals
-    if not short:
-        portfolio_return = portfolio.loc[(portfolio>0)&(portfolio.index.date>=plot_date)].cumprod().dropna()
+    if data.shape[0] == 0:
+        st.error('Please input a valid ticker.')
     else:
-        portfolio.loc[(portfolio<0)] = 2+portfolio.loc[(portfolio<0)]
-        portfolio_return = portfolio.loc[portfolio.index.date>=plot_date].cumprod().dropna()
-    df = pd.DataFrame(data.loc[data.index.date>=plot_date].cumprod())
-    df.columns = [ticker]
-    df['Strategy']=portfolio_return
+        signals = moving_average_cross(data, fast_avg, slow_avg)
+        portfolio = data * signals
+        if not short:
+            portfolio_return = portfolio.loc[(portfolio>0)&(portfolio.index.date>=plot_date)].cumprod().dropna()
+        else:
+            portfolio.loc[(portfolio<0)] = 2+portfolio.loc[(portfolio<0)]
+            portfolio_return = portfolio.loc[portfolio.index.date>=plot_date].cumprod().dropna()
+        df = pd.DataFrame(data.loc[data.index.date>=plot_date].cumprod())
+        df.columns = [ticker]
+        df['Strategy']=portfolio_return
 
-    #st.line_chart(df)
+        #st.line_chart(df)
 
-    fig,ax=plt.subplots(figsize=(10,6))
-    plt.plot(df)
-    ax.grid()
-    ax.set_title('Strategy vs. underlying asset')
-    ax.legend(df.columns)
-    st.pyplot(fig)
+        fig,ax=plt.subplots(figsize=(10,6))
+        plt.plot(df)
+        ax.grid()
+        ax.set_title('Strategy vs. underlying asset')
+        ax.legend(df.columns)
+        st.pyplot(fig)

@@ -87,6 +87,7 @@ if run:
     import pandas as pd
     import matplotlib.ticker as ticker
     import matplotlib.pyplot as plt
+    import matplotlib.dates as mdates
     from dateutil.relativedelta import relativedelta
 
     # Tickers
@@ -186,17 +187,22 @@ if run:
     fig, ax = plt.subplots()
     daily_cumprod = (daily_df[['Strategy',idx]]+1).cumprod()
     tmp = pd.DataFrame([[0,0]],columns=['Strategy',idx],index=[(mom.index[-1]-pd.DateOffset(1)).date()])
-    pd.concat([100*(daily_cumprod-1),tmp]).plot(ax=ax,grid=True,title=f'Performance since {mom.index[-1].date()}',figsize=(10,6))
+    pd.concat([100*(daily_cumprod-1),tmp]).plot(ax=ax,grid=True,title=f'Performance since {mom.index[-1].date()}',figsize=(14,8))
     ax.yaxis.set_major_formatter(ticker.PercentFormatter())
     st.pyplot(fig)
 
     # Yahoo bug
     with st.expander('If the chart appears inaccurate at the beginning of a month, click here for info on a bug in Yahoo Finance.'):
-        st.caption('''Real-time price data is sourced from Yahoo Finance. However, there is a bug in their system that occasionally discards the 31st day of a month. This can result in incorrect total percentage returns calculated for that month and the following one due to missing data for the 31st. To address this issue, one solution is to simply consider the affected month as having only 30 days instead. The price change on the missing day will then be reflected in the returns for the following month, even though it won't be visible in the table. Hope Yahoo will fix this in the future.''')
+        st.caption('''Real-time financial data from Yahoo Finance may occasionally have discrepancies, 
+        such as missing values on the 31st day of a month or mislabeling the first day of a new month 
+        as the last day of the previous month. These issues can affect the accuracy of percentage 
+        calculations and visualizations, especially when transitioning from one month to the next.
+         These issues are typically fixed by Yahoo within a day or two. If the plot appears suspicious, or 
+         if data from a previous month is still present when it's already a new month, please check back later for corrected data.''')
 
 
     '#### Daily performance of chosen stocks for current month:'
     monthly_df = (mom-1).loc[current:,top_tickers][1:]
-    monthly_df.index = ['Current Month total']
+    monthly_df.index = ['Current Month total return']
     monthly_df = pd.concat([daily_df[top_tickers],monthly_df])
     st.table(monthly_df)
