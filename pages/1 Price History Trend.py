@@ -87,7 +87,6 @@ if run:
     import pandas as pd
     import matplotlib.ticker as ticker
     import matplotlib.pyplot as plt
-    import matplotlib.dates as mdates
     from dateutil.relativedelta import relativedelta
 
     # Tickers
@@ -120,6 +119,11 @@ if run:
     def performance(month):
         portfolio = mom.loc[month:,get_top(month)][1:2] # next month performance
         return portfolio.mean(axis=1).values[0]
+
+    def pd_pct_view(df):
+        for c in df.columns:
+            df[c] = df[c].apply(lambda x: (f'{x:.2%}'))
+        return df
 
     with st.spinner('Computing...'):
         # Month over month precent change
@@ -160,7 +164,7 @@ if run:
     stats_df=pd.DataFrame((returns[returns.index>=plot_date]-1).describe()[1:],columns=['Strategy'])
     stats_df[idx]=(idx_return[idx_return.index>=plot_date]-1).describe()[1:]
     stats_df.index = ['Mean Monthly Return','Standard Deviation', 'Worst Monthly Return','25 Percentile Monthly Return', 'Medium Monthly Return','75 Percentile Monthly Return', 'Best Monthly Return']
-    st.table(stats_df)
+    st.table(pd_pct_view(stats_df))
 
     '#### What\'s your monthly Alpha compare to index?'
     st.caption('Alpha represents the excess return, or the degree by which your strategy outperforms the market.')
@@ -205,4 +209,4 @@ if run:
     monthly_df = (mom-1).loc[current:,top_tickers][1:]
     monthly_df.index = ['Current Month total return']
     monthly_df = pd.concat([daily_df[top_tickers],monthly_df])
-    st.table(monthly_df)
+    st.table(pd_pct_view(monthly_df))
