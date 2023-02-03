@@ -4,6 +4,7 @@ import numpy as np
 import streamlit as st
 import matplotlib.pyplot as plt
 from datetime import datetime,timedelta
+import plotly.express as px
 
 '## Moving Average Crossover'
 'This strategy is a popular trading approach that uses two moving averages (fast and slow) to generate buy and sell signals.'
@@ -46,9 +47,9 @@ if ticker:
         df.columns = [ticker]
         df['Strategy']=portfolio_return
 
-        fig,ax=plt.subplots(figsize=(10,6))
-        plt.plot(df)
-        ax.grid()
-        ax.set_title('Strategy vs. underlying asset')
-        ax.legend(df.columns)
-        st.pyplot(fig)
+
+        fig = px.line(df,labels={'Date':'', 'value':'','variable':''},title='Total Return')
+        fig.update_layout(hovermode="x unified")
+        fig.update_traces(hovertemplate = "%{y}")
+        fig.layout.yaxis.tickformat = '.2%'
+        st.plotly_chart(fig)

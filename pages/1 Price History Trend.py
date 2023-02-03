@@ -88,6 +88,7 @@ if run:
     import matplotlib.ticker as ticker
     import matplotlib.pyplot as plt
     from dateutil.relativedelta import relativedelta
+    import plotly.express as px
 
     # Tickers
     if pool == 'NASDAQ-100 (Fast)':
@@ -139,7 +140,7 @@ if run:
     st.success('Computation success!')
 
 
-    f'#### See how your strategy has performed since {date_input} vs. index'
+    f'##### See how your strategy has performed since {date_input} vs. index'
     
     # Cumpound return
     cum_ret = pd.DataFrame(returns[returns.index>=plot_date].cumprod(), columns=['Strategy'])
@@ -147,35 +148,31 @@ if run:
     idx_return = (idx_df.pct_change()+1)[idx_df.index>=plot_date]
     cum_ret[idx] = idx_return.cumprod()
     col1,col2 = st.columns(2)
-    col1.metric('Your Return', f'{100 * cum_ret.Strategy[-1]:.2f}%')
-    col2.metric(f'{idx} Return', f'{100*cum_ret[idx][-1]:.2f}%')
-    #st.line_chart(cum_ret)
-    fig, ax = plt.subplots()
-    (100*cum_ret).plot(ax=ax,figsize=(8,6))
-    ax.yaxis.set_major_formatter(ticker.PercentFormatter())
-    ax.set_ylabel('Return')
-    ax.grid()
-    ax.set_title(f'Cumulated return')
-    ax.legend(['Strategy',idx])
-    st.pyplot(fig)
+    col1.metric('Your Cumulative Return', f'{(cum_ret.Strategy[-1]-1):.2%}')
+    col2.metric(f'{idx} Cumulative Return', f'{(cum_ret[idx][-1]-1):.2%}')
+    
+    fig = px.line(cum_ret,cum_ret.index,['Strategy',idx],labels={'value':'','variable':'','Date':''},title='Total Return')
+    fig.update_layout(hovermode="x unified")
+    fig.layout.yaxis.tickformat = ',.0%'
+    fig.update_traces(hovertemplate = "%{y}")
+    st.plotly_chart(fig)
 
-    '#### Some statistics for monthly performance:'
+    '##### Some statistics for monthly performance:'
     # Stats about strategy and index
     stats_df=pd.DataFrame((returns[returns.index>=plot_date]-1).describe()[1:],columns=['Strategy'])
     stats_df[idx]=(idx_return[idx_return.index>=plot_date]-1).describe()[1:]
     stats_df.index = ['Mean Monthly Return','Standard Deviation', 'Worst Monthly Return','25 Percentile Monthly Return', 'Medium Monthly Return','75 Percentile Monthly Return', 'Best Monthly Return']
-    st.table(pd_pct_view(stats_df))
+    st.table(pd_pct_view(stats_df.iloc[[0,1,2,4,6]]))
 
-    '#### What\'s your monthly Alpha compare to index?'
-    st.caption('Alpha represents the excess return, or the degree by which your strategy outperforms the market.')
-    # Difference between strategy and index (Alpha)
-    fig, ax = plt.subplots()
-    ax = ((returns[returns.index>=plot_date]-idx_return[idx_return.index>=plot_date])*100).plot(kind='box', vert=False ,grid=True, figsize = (8,4))
-    ax.xaxis.set_major_formatter(ticker.PercentFormatter())
-    st.pyplot(fig)
+    diff = returns[returns.index>=plot_date]-idx_return[idx_return.index>=plot_date]
+    fig = px.box(diff,x= 0, points='all',title='Distribution of Monthly Alpha',labels={'0':''})
+    fig.layout.xaxis.tickformat = '.2%'
+    fig.update_traces(hovertemplate = "%{x}")
+    st.plotly_chart(fig,use_container_width=True)
+    '[Alpha](https://en.wikipedia.org/wiki/Alpha_(finance)) represents the excess return, or the degree by which your strategy outperforms the market.'
 
 
-    '#### Closer look for current month:'
+
     current = mom.index[-2]
     
     # Portfolio returns daily
@@ -191,9 +188,12 @@ if run:
     fig, ax = plt.subplots()
     daily_cumprod = (daily_df[['Strategy',idx]]+1).cumprod()
     tmp = pd.DataFrame([[0,0]],columns=['Strategy',idx],index=[(mom.index[-1]-pd.DateOffset(1)).date()])
-    pd.concat([100*(daily_cumprod-1),tmp]).plot(ax=ax,grid=True,title=f'Performance since {mom.index[-1].date()}',figsize=(14,8))
-    ax.yaxis.set_major_formatter(ticker.PercentFormatter())
-    st.pyplot(fig)
+    daily_cumprod = pd.concat([tmp,(daily_cumprod-1)])
+    fig = px.line(daily_cumprod,daily_cumprod.index,['Strategy',idx],labels={'index':'', 'value':'','variable':''},title='Current Month Cumulative Return')
+    fig.update_layout(hovermode="x unified")
+    fig.update_traces(hovertemplate = "%{y}")
+    fig.layout.yaxis.tickformat = '.2%'
+    st.plotly_chart(fig)
 
     # Yahoo bug
     with st.expander('If the chart appears inaccurate at the beginning of a month, click here for info on a bug in Yahoo Finance.'):
@@ -205,7 +205,7 @@ if run:
          if data from a previous month is still present when it's already a new month, please check back later for corrected data.''')
 
 
-    '#### Daily performance of chosen stocks for current month:'
+    '##### Daily performance of chosen stocks for current month:'
     monthly_df = (mom-1).loc[current:,top_tickers][1:]
     monthly_df.index = ['Current Month total return']
     monthly_df = pd.concat([daily_df[top_tickers],monthly_df])
