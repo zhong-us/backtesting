@@ -23,7 +23,7 @@ def moving_average_cross(data, fast_avg, slow_avg):
     return np.roll(signals,1)
 
 ticker = st.text_input('Please input **one** stock/ETF ticker (Eg. BRK-B) for visualization:')
-plot_date = st.date_input("Visualization starting from",value=datetime(2020,1,1),max_value=datetime.today()-timedelta(days=5))
+plot_date = st.date_input("Strategy started from",value=datetime(2020,1,1),max_value=datetime.today()-timedelta(days=5))
 fast_avg = st.slider('Fast Moving Average', 5, 250, 50,format='%d days')
 slow_avg = st.slider('Slow Moving Average', 10, 1000, 200,format='%d days')
 short = st.checkbox('"Double down" by shorting the same quantity of the asset when a sell signal is triggered.')

@@ -8,8 +8,8 @@ st.caption('Check back on the first day of the next month to see the new stock t
 'The holding period is set for a duration of one month.'
 
 #pool = st.selectbox('Choose pool of stocks:', ['NASDAQ-100', 'S&P 500'], label_visibility = 'visible')
-pool = st.radio('Create a customized portfolio choosing a pool of stocks and filtering them based on past performance.'
-        ,('NASDAQ-100 (Fast)', 'S&P 500 (Slow)'),horizontal=True)
+'Create a customized portfolio starting by choosing a pool of stocks and then filtering them based on past performance.'
+pool = st.radio('',('NASDAQ-100 (Fast)', 'S&P 500 (Slow)'),horizontal=True,label_visibility='collapsed')
 
 'Multiple rounds of filtering can be applied to identify stocks with the strongest momentum.'
 st.caption('If less than 4 filters are needed, put the final number of stocks left in the filters that\'re not needed. For example, if only 3 filters are needed, and you need 10 stocks in your portfolio, just put 10 stocks in your 4th filter as well and choose any month option (It does not matter).')
@@ -75,7 +75,7 @@ filters.append([n,m])
 'Stocks will be held with equal weight, unless you opt for a one-stock portfolio.'
 'The performance of the strategy is recorded each month for visualization.'
  
-date_input = st.text_input('Visualization start from (YYYY-MM)','2013-01')
+date_input = st.text_input('Strategy started from (YYYY-MM)','2013-01')
 
 _,_,c,_,_= st.columns(5)
 with c:
