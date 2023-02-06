@@ -7,6 +7,7 @@ from datetime import datetime,timedelta
 import plotly.express as px
 
 '## Moving Average Crossover'
+st.info('For optimal viewing, use a PC or tablet or rotate your mobile device to landscape.')
 'This strategy is a popular trading approach that uses two moving averages (fast and slow) to generate buy and sell signals.'
 st.caption('Moving average is a commonly used technical analysis indicator that calculates the average price of an asset over a specified number of periods.')
 'The strategy works by comparing the fast moving average (representing short-term momentum) with the slow moving average (representing long-term momentum).'
@@ -48,8 +49,9 @@ if ticker:
         df['Strategy']=portfolio_return
 
 
-        fig = px.line(df,labels={'Date':'', 'value':'','variable':''},title='Total Return')
+        fig = px.line(df-1,labels={'Date':'', 'value':'','variable':''},title='Cumulative Return')
         fig.update_layout(hovermode="x unified")
         fig.update_traces(hovertemplate = "%{y}")
         fig.layout.yaxis.tickformat = '.2%'
         st.plotly_chart(fig)
+        st.caption('Interact with the chart by hovering over it and selecting an area to enlarge. Double-click to return to full view. Use the legend to hide or show lines.')

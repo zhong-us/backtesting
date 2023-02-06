@@ -1,14 +1,14 @@
 import streamlit as st
 from datetime import datetime, timedelta
 '## Price History Trend'
-st.info('For optimal viewing on mobile, rotate your device to landscape orientation.')
+st.info('For optimal viewing, use a PC or tablet or rotate your mobile device to landscape.')
 'This strategy selects stocks for the portfolio based on their past performance ranking among its peers.'
 'The portfolio rebalances monthly at month-end, with new stocks for the following month being selected.'
 st.caption('Check back on the first day of the next month to see the new stock tickers.')
 'The holding period is set for a duration of one month.'
 
 #pool = st.selectbox('Choose pool of stocks:', ['NASDAQ-100', 'S&P 500'], label_visibility = 'visible')
-'Create a customized portfolio starting by choosing a pool of stocks and then filtering them based on past performance.'
+'Start creating a customized portfolio by choosing a pool of stocks and then filtering them based on past performance.'
 pool = st.radio('',('NASDAQ-100 (Fast)', 'S&P 500 (Slow)'),horizontal=True,label_visibility='collapsed')
 
 'Multiple rounds of filtering can be applied to identify stocks with the strongest momentum.'
@@ -151,11 +151,12 @@ if run:
     col1.metric('Your Cumulative Return', f'{(cum_ret.Strategy[-1]-1):.2%}')
     col2.metric(f'{idx} Cumulative Return', f'{(cum_ret[idx][-1]-1):.2%}')
     
-    fig = px.line(cum_ret,cum_ret.index,['Strategy',idx],labels={'value':'','variable':'','Date':''},title='Total Return')
+    fig = px.line(cum_ret-1,cum_ret.index,['Strategy',idx],labels={'value':'','variable':'','Date':''})
     fig.update_layout(hovermode="x unified")
     fig.layout.yaxis.tickformat = ',.0%'
     fig.update_traces(hovertemplate = "%{y}")
     st.plotly_chart(fig)
+    st.caption('Interact with the chart by hovering over it and selecting an area to enlarge. Double-click to return to full view. Use the legend to hide or show lines.')
 
     '##### Some statistics for monthly performance:'
     # Stats about strategy and index
