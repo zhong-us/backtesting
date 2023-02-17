@@ -23,6 +23,11 @@ def moving_average_cross(data, fast_avg, slow_avg):
     signals = np.where(short_rolling > long_rolling, 1, -1)
     return np.roll(signals,1)
 
+@st.cache_data(ttl=28800,show_spinner=False)
+def get_price(ticker,start_date):
+    data = yf.download(ticker, start=start_date)['Adj Close'].pct_change()+1
+    return data
+
 ticker = st.text_input('Please input **one** stock/ETF ticker (Eg. BRK-B) for visualization:')
 plot_date = st.date_input("Strategy started from",value=datetime(2020,1,1),max_value=datetime.today()-timedelta(days=5))
 fast_avg = st.slider('Fast Moving Average', 5, 250, 50,format='%d days')
@@ -32,8 +37,8 @@ if ticker:
     # in order for visualization to start on the plot_date
     # analysis has to start earlier to calculate the moving averages
     # and to compensate for weekends and holidays
-    start_date = plot_date-timedelta(days=slow_avg*1.5)
-    data = yf.download(ticker, start=start_date)['Adj Close'].pct_change()+1
+    start_date = plot_date-timedelta(days=1500)
+    data = get_price(ticker,start_date)
     if data.shape[0] == 0:
         st.error('Please input a valid ticker.')
     else:

@@ -90,24 +90,36 @@ if run:
     from dateutil.relativedelta import relativedelta
     import plotly.express as px
 
+    @st.cache_data(ttl = 28800,show_spinner="Price data downloading")
+    def get_price(pool,date_input):
+        if pool == 'NASDAQ-100 (Fast)':
+            ticker_df = pd.read_html("https://en.wikipedia.org/wiki/Nasdaq-100")[4]
+            tickers = ticker_df.Ticker.to_list()
+        else:
+            ticker_df = pd.read_html("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")[0]
+            tickers = ticker_df.Symbol.to_list()
+
+        tickers = [x.replace('.','-') for x in tickers]
+        plot_date = date_input+'-01'
+        start_date = datetime.strptime(plot_date,'%Y-%m-%d')-relativedelta(months=13)
+
+        df = yf.download(tickers,start=start_date,interval='1mo')['Adj Close']
+
+        return  df
+
+
     # Tickers
     if pool == 'NASDAQ-100 (Fast)':
-        ticker_df = pd.read_html("https://en.wikipedia.org/wiki/Nasdaq-100")[4]
-        tickers = ticker_df.Ticker.to_list()
         idx = 'QQQ'
     else:
-        ticker_df = pd.read_html("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")[0]
-        tickers = ticker_df.Symbol.to_list()
         idx = 'SPY'
 
-    tickers = [x.replace('.','-') for x in tickers]
     plot_date = date_input+'-01'
     start_date = datetime.strptime(plot_date,'%Y-%m-%d')-relativedelta(months=13)
 
-    with st.spinner('Data Downloading...'):
-        df = yf.download(tickers,start=start_date,interval='1mo')['Adj Close']
-    st.success('Download success!')
+    df = get_price(pool,date_input)
 
+    @st.cache_data(ttl = 28800,show_spinner=False)
     def return_by_m_month(df,m):
         return df.rolling(m).apply(np.prod)
 
@@ -121,6 +133,7 @@ if run:
         portfolio = mom.loc[month:,get_top(month)][1:2] # next month performance
         return portfolio.mean(axis=1).values[0]
 
+    @st.cache_data(ttl = 28800,show_spinner=False)
     def pd_pct_view(df):
         for c in df.columns:
             df[c] = df[c].apply(lambda x: (f'{x:.2%}'))
