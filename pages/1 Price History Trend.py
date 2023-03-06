@@ -153,7 +153,7 @@ if run:
     st.success('Computation success!')
 
 
-    f'##### See how your strategy has performed since {date_input} vs. index'
+    f'##### See how your strategy has performed since {date_input} vs. Benchmark'
     
     # Cumpound return
     cum_ret = pd.DataFrame(returns[returns.index>=plot_date].cumprod(), columns=['Strategy'])

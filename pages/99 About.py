@@ -2,7 +2,7 @@ import streamlit as st
 
 '# ... but in the long run,'
 '# it is a weighing machine.\"'
-'## - Warren Buffett'
+'## - Benjamin Graham'
 ''
 '---'
 ''

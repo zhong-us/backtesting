@@ -2,7 +2,7 @@ import streamlit as st
 
 '# \"In the short run,'
 '# the market is a voting machine, ...'
-'## - Warren Buffett'
+'## - Benjamin Graham'
 ''
 '---'
 ''
