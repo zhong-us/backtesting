@@ -67,7 +67,7 @@ with col2:
 with col3:
     'performers using'
 with col4:
-    m = st.selectbox('months', [1,2,3,4,5,6,7,8,9,10,11,12],0,label_visibility = 'collapsed')
+    m = st.selectbox('months', [1,2,3,4,5,6,7,8,9,10,11,12],1,label_visibility = 'collapsed')
 with col5:
     'months return.'
 filters.append([n,m])
