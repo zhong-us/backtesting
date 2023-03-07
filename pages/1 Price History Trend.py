@@ -175,7 +175,7 @@ if run:
     # Stats about strategy and index
     stats_df=pd.DataFrame((returns[returns.index>=plot_date]-1).describe()[1:],columns=['Strategy'])
     stats_df[idx]=(idx_return[idx_return.index>=plot_date]-1).describe()[1:]
-    stats_df.index = ['Mean Monthly Return','Standard Deviation', 'Worst Monthly Return','25 Percentile Monthly Return', 'Medium Monthly Return','75 Percentile Monthly Return', 'Best Monthly Return']
+    stats_df.index = ['Mean Monthly Return','Standard Deviation', 'Worst Monthly Return','25 Percentile Monthly Return', 'Median Monthly Return','75 Percentile Monthly Return', 'Best Monthly Return']
     st.table(pd_pct_view(stats_df.iloc[[0,1,2,4,6]]))
 
     diff = returns[returns.index>=plot_date]-idx_return[idx_return.index>=plot_date]
