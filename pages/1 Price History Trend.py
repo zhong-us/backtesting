@@ -75,7 +75,7 @@ filters.append([n,m])
 'Stocks will be held with equal weight, unless you opt for a one-stock portfolio.'
 'The performance of the strategy is recorded each month for visualization.'
  
-date_input = st.text_input('Strategy started from (YYYY-MM)','2013-01')
+date_input = st.text_input('Strategy started from (YYYY-MM)','2023-01')
 
 _,_,c,_,_= st.columns(5)
 with c:
