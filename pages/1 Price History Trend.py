@@ -75,7 +75,7 @@ filters.append([n,m])
 'Stocks will be held with equal weight, unless you opt for a one-stock portfolio.'
 'The performance of the strategy is recorded each month for visualization.'
  
-date_input = st.text_input('Strategy started from (YYYY-MM)','2023-01')
+date_input = st.text_input('Strategy started from (YYYY-MM)','2024-01')
 
 _,_,c,_,_= st.columns(5)
 with c:
@@ -94,10 +94,9 @@ if run:
     def get_price(pool,date_input):
         if pool == 'NASDAQ-100 (Fast)':
             ticker_df = pd.read_html("https://en.wikipedia.org/wiki/Nasdaq-100")[4]
-            tickers = ticker_df.Ticker.to_list()
         else:
             ticker_df = pd.read_html("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")[0]
-            tickers = ticker_df.Symbol.to_list()
+        tickers = ticker_df.Symbol.to_list()
 
         tickers = [x.replace('.','-') for x in tickers]
         plot_date = date_input+'-01'
