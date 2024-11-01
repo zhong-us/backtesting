@@ -135,12 +135,13 @@ if run:
     @st.cache_data(ttl = 28800,show_spinner=False)
     def pd_pct_view(df):
         for c in df.columns:
-            df[c] = df[c].apply(lambda x: (f'{x:.2%}'))
+            #df[c] = df[c].apply(lambda x: (f'{x:.2%}'))
+            df.loc[:, c] = df[c].apply(lambda x: f'{x:.2%}')
         return df
 
     with st.spinner('Computing...'):
         # Month over month precent change
-        mom = df.pct_change()+1
+        mom = df.pct_change(fill_method=None)+1
         months_ret = [[n,return_by_m_month(mom,m)] for n,m in filters]
 
         returns = []
@@ -160,7 +161,7 @@ if run:
     idx_return = (idx_df.pct_change()+1)[idx_df.index>=plot_date]
     cum_ret[idx] = idx_return.cumprod()
     col1,col2 = st.columns(2)
-    col1.metric('Your Cumulative Return', f'{(cum_ret.Strategy[-1]-1):.2%}')
+    col1.metric('Your Cumulative Return', f'{(cum_ret.Strategy.iloc[-1]-1):.2%}')
     col2.metric(f'{idx} Cumulative Return', f'{(cum_ret[idx][-1]-1):.2%}')
     
     fig = px.line(cum_ret-1,cum_ret.index,['Strategy',idx],labels={'value':'','variable':'','Date':''})
@@ -177,18 +178,13 @@ if run:
     stats_df.index = ['Mean Monthly Return','Standard Deviation', 'Worst Monthly Return','25 Percentile Monthly Return', 'Median Monthly Return','75 Percentile Monthly Return', 'Best Monthly Return']
     st.table(pd_pct_view(stats_df.iloc[[0,1,2,4,6]]))
 
-    diff = returns[returns.index>=plot_date]-idx_return[idx_return.index>=plot_date]
+    #bar chart for monthly alpha: temporarily removed
+    #diff = returns[returns.index>=plot_date]-idx_return[idx_return.index>=plot_date]
     #fig = px.box(diff,x= 0, points='all',title='Distribution of Monthly Alpha',labels={'0':''})
     #fig.update_traces(hovertemplate = "%{x}")
-
-    fig = px.box(diff.reset_index(), x='Date', y=diff.columns[0], points='all', title='Distribution of Monthly Alpha')
-    fig.update_traces(hovertemplate = "%{y}")
-
-    fig.layout.xaxis.tickformat = '.2%'
-    st.plotly_chart(fig,use_container_width=True)
-    '[Alpha](https://en.wikipedia.org/wiki/Alpha_(finance)) represents the excess return, or the degree by which your strategy outperforms the market.'
-
-
+    #fig.layout.xaxis.tickformat = '.2%'
+    #st.plotly_chart(fig,use_container_width=True)
+    #'[Alpha](https://en.wikipedia.org/wiki/Alpha_(finance)) represents the excess return, or the degree by which your strategy outperforms the market.'
 
     current = mom.index[-2]
     
