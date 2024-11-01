@@ -181,7 +181,7 @@ if run:
     #fig = px.box(diff,x= 0, points='all',title='Distribution of Monthly Alpha',labels={'0':''})
     #fig.update_traces(hovertemplate = "%{x}")
 
-    fig = px.box(diff.reset_index(), x='index', y=diff.columns[0], points='all', title='Distribution of Monthly Alpha')
+    fig = px.box(diff.reset_index(), x='Date', y=diff.columns[0], points='all', title='Distribution of Monthly Alpha')
     fig.update_traces(hovertemplate = "%{y}")
 
     fig.layout.xaxis.tickformat = '.2%'
