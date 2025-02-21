@@ -102,7 +102,7 @@ if run:
         plot_date = date_input+'-01'
         start_date = datetime.strptime(plot_date,'%Y-%m-%d')-relativedelta(months=13)
 
-        df = yf.download(tickers,start=start_date,interval='1mo')['Adj Close']
+        df = yf.download(tickers,start=start_date,interval='1mo')['Close']
 
         return  df
 
@@ -157,7 +157,7 @@ if run:
     
     # Cumpound return
     cum_ret = pd.DataFrame(returns[returns.index>=plot_date].cumprod(), columns=['Strategy'])
-    idx_df = yf.download(idx,start=start_date,interval='1mo')['Adj Close']
+    idx_df = yf.download(idx,start=start_date,interval='1mo')['Close']
     idx_return = (idx_df.pct_change()+1)[idx_df.index>=plot_date]
     cum_ret[idx] = idx_return.cumprod()
     col1,col2 = st.columns(2)
@@ -190,11 +190,11 @@ if run:
     
     # Portfolio returns daily
     top_tickers = get_top(current).to_list()
-    daily_df = yf.download(top_tickers,start=current)['Adj Close'].pct_change().loc[mom.index[-1]:]
+    daily_df = yf.download(top_tickers,start=current)['Close'].pct_change().loc[mom.index[-1]:]
     if len(top_tickers)==1: # daily_df is a Series
         daily_df = daily_df.to_frame(*top_tickers)
     daily_df['Strategy'] = daily_df.mean(axis=1)
-    daily_df[idx] = yf.download(idx,start=current)['Adj Close'].pct_change().loc[mom.index[-1]:]
+    daily_df[idx] = yf.download(idx,start=current)['Close'].pct_change().loc[mom.index[-1]:]
     daily_df.index = [x.date() for x in daily_df.index]
     
     # Daily chart 
