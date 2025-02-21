@@ -4,3 +4,4 @@ yfinance
 streamlit
 matplotlib
 plotly
+lxml
