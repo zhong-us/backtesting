@@ -96,7 +96,7 @@ if run:
             ticker_df = pd.read_html("https://en.wikipedia.org/wiki/Nasdaq-100")[4]
         else:
             ticker_df = pd.read_html("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")[0]
-        tickers = ticker_df.Symbol.to_list()
+        tickers = ticker_df.Ticker.to_list()
 
         tickers = [x.replace('.','-') for x in tickers]
         plot_date = date_input+'-01'
